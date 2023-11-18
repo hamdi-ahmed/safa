@@ -1,12 +1,19 @@
 import { Icon } from '@iconify/react'
 import { Button, Stack, Typography } from '@mui/material'
+import { RegisterForm } from '../../types/register'
 
 // ** types
 type Props = {
-	handleFinish: () => void
-	handleBack: () => void
+	handleFinish: (newData: RegisterForm, finalStep?: boolean) => void
+	handleBack: (newData: RegisterForm) => void
+	formData: RegisterForm
 }
-const ConfirmationMail: React.FC<Props> = ({ handleBack, handleFinish }) => {
+
+const ConfirmationMail: React.FC<Props> = ({
+	handleBack,
+	handleFinish,
+	formData
+}) => {
 	return (
 		<Stack alignItems='center' justifyContent='center'>
 			<Icon
@@ -29,7 +36,7 @@ const ConfirmationMail: React.FC<Props> = ({ handleBack, handleFinish }) => {
 							width: { md: '20%' },
 							background: 'whitesmoke'
 						}}
-						onClick={handleBack}
+						onClick={() => handleBack(formData)}
 					>
 						Back
 					</Button>
@@ -38,7 +45,7 @@ const ConfirmationMail: React.FC<Props> = ({ handleBack, handleFinish }) => {
 						variant='contained'
 						color='primary'
 						sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
-						onClick={handleFinish}
+						onClick={() => handleFinish(formData, true)}
 					>
 						Confirm
 					</Button>

@@ -5,8 +5,6 @@ import TextField, { TextFieldProps } from '@mui/material/TextField'
 type Props = {
 	placeHolder: string
 	fieldName: string
-	isPassword?: boolean
-	confirmPassword?: boolean
 } & Omit<TextFieldProps, 'variant'>
 
 const TextComponent: React.FC<Props> = ({

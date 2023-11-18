@@ -1,9 +1,6 @@
 // ** Imports
 import { useState } from 'react'
 import {
-	Box,
-	Button,
-	Container,
 	Paper,
 	Stack,
 	Step,
@@ -40,63 +37,51 @@ const StepForm = () => {
 	// ** states
 	const [activeStep, setActiveStep] = useState(0)
 	const [formData, setFormData] = useState<RegisterForm>({
-		step1: {
-			user_email: '',
-			user_full_name: '',
-			user_is_admin: '',
-			user_nationality: '',
-			user_password: '',
-			user_password_confirmation: '',
-			user_phone: '',
-			user_position: '',
-			user_status: ''
-		},
-		step2: {
-			company_address: '',
-			company_business_email: '',
-			company_city_id: '',
-			company_country_id: '',
-			company_name: '',
-			company_phone: ''
-		}
+		user_email: '',
+		user_full_name: '',
+		user_is_admin: '',
+		user_nationality: '',
+		user_password: '',
+		user_password_confirmation: '',
+		user_phone: '',
+		user_position: '',
+		user_status: '',
+		company_address: '',
+		company_business_email: '',
+		company_city_id: '',
+		company_country_id: '',
+		company_name: '',
+		company_phone: ''
 	})
 
+	// ** final step
+	const finalStepForm = (newData: RegisterForm) => {
+		console.log({ newData })
+	}
+
 	// ** handle changing move from step to another
-	const handleNext = () => {
+	const handleNext = (newData: RegisterForm, finalStep = false) => {
+		if (finalStep) {
+			finalStepForm(newData)
+			return
+		}
+		setFormData((prev) => ({ ...prev, ...newData }))
 		setActiveStep((prevActiveStep) => prevActiveStep + 1)
 	}
 
-	const handleBack = () => {
+	const handleBack = (newData: any) => {
+		setFormData((prev) => ({ ...prev, ...newData }))
 		setActiveStep((prevActiveStep) => prevActiveStep - 1)
-	}
-
-	const handleFinish = () => {
-		// Handle final submission or any other logic
-		console.log('Form submitted successfully', formData)
-	}
-
-	const updateFormData = (step: string, data: any) => {
-		setFormData((prevFormData) => ({
-			...prevFormData,
-			[step]: data
-		}))
 	}
 
 	const getStepContent = (stepIndex: number) => {
 		switch (stepIndex) {
 			case 0:
-				return (
-					<PersonalInfo
-						formData={formData.step1}
-						updateFormData={(data) => updateFormData('step1', data)}
-						handleNext={handleNext}
-					/>
-				)
+				return <PersonalInfo formData={formData} handleNext={handleNext} />
 			case 1:
 				return (
 					<CompanyInfoModal
 						formData={formData}
-						updateFormData={(data) => updateFormData('step2', data)}
 						handleBack={handleBack}
 						handleNext={handleNext}
 					/>
@@ -105,7 +90,8 @@ const StepForm = () => {
 				return (
 					<ConfirmationMail
 						handleBack={handleBack}
-						handleFinish={handleFinish}
+						handleFinish={handleNext}
+						formData={formData}
 					/>
 				)
 			default:

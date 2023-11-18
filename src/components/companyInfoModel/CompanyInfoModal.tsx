@@ -5,11 +5,11 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
-	SelectChangeEvent,
 	Stack,
 	TextField
 } from '@mui/material'
-import { useState } from 'react'
+import { Form, FormikProvider, useFormik } from 'formik'
+import * as Yup from 'yup'
 
 // ** Shared Components
 import TextComponent from '../shared/TextField'
@@ -17,124 +17,179 @@ import SharedSelect from '../shared/SelectComponent'
 
 // ** types
 import { RegisterForm } from '../../types/register'
+import { countries } from '../../mocks/mocking'
 
 // ** types
 type Props = {
 	formData: RegisterForm
-	updateFormData: (step: string, data: any) => void
-	handleNext: () => void
-	handleBack: () => void
+	handleNext: (newData: RegisterForm) => void
+	handleBack: (newData: RegisterForm) => void
 }
 
 const CompanyInfoModal: React.FC<Props> = ({
 	formData,
-	updateFormData,
 	handleNext,
 	handleBack
 }) => {
-	// ** states
-	const [selectedValue, setSelectedValue] = useState('')
+	// ** formik => General info model validation
+	const companyInfoSchema = Yup.object().shape({
+		company_name: Yup.string().required('Company name is required'),
 
-	const options = [
-		{ label: 'Option 1', value: 'option1' },
-		{ label: 'Option 2', value: 'option2' },
-		{ label: 'Option 3', value: 'option3' }
-	]
+		company_address: Yup.string().required('Company address is required'),
+		company_phone: Yup.string()
+			// .matches(/^\+20[0-9]{9}$/, 'Invalid phone number format')
+			.required('Phone number is required'),
+		company_business_email: Yup.string()
+			.email()
+			.required('Email address is required'),
+		company_city_id: Yup.string().required('City is required'),
+		company_country_id: Yup.string().required('City is required')
+	})
 
-	const handleSelectChange = (event: SelectChangeEvent<string>) => {
-		setSelectedValue(event.target.value as string)
-	}
+	// ** formik =>  submit handler
+	const form = useFormik<RegisterForm>({
+		enableReinitialize: true,
+		initialValues: formData,
+		validationSchema: companyInfoSchema,
+		onSubmit: async (values: RegisterForm) => {
+			console.log({ values })
+			handleNext(values)
+		}
+	})
+
+	const { errors, touched, getFieldProps, values } = form
 
 	return (
-		<Grid container spacing={2}>
-			<Grid item xs={12}>
-				<TextComponent
-					fieldName='company name'
-					placeHolder='Enter your company name'
-					type='text'
-				/>
-			</Grid>
+		<FormikProvider value={form}>
+			<Form noValidate autoComplete='off'>
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<TextComponent
+							fieldName='company name'
+							placeHolder='Enter your company name'
+							type='text'
+							{...getFieldProps('company_name')}
+							error={Boolean(touched.company_name && errors.company_name)}
+							helperText={touched.company_name && errors.company_name}
+						/>
+					</Grid>
 
-			<Grid item xs={12}>
-				<TextComponent
-					fieldName='Address'
-					placeHolder='Enter your address'
-					type='text'
-				/>
-			</Grid>
+					<Grid item xs={12}>
+						<TextComponent
+							fieldName='Address'
+							placeHolder='Enter your address'
+							type='text'
+							{...getFieldProps('company_address')}
+							error={Boolean(touched.company_address && errors.company_address)}
+							helperText={touched.company_address && errors.company_address}
+						/>
+					</Grid>
 
-			<Grid item xs={12}>
-				<TextComponent
-					fieldName='business email'
-					placeHolder='Enter your business email'
-					type='text'
-				/>
-			</Grid>
+					<Grid item xs={12}>
+						<TextComponent
+							fieldName='business email'
+							placeHolder='Enter your business email'
+							type='text'
+							{...getFieldProps('company_business_email')}
+							error={Boolean(
+								touched.company_business_email && errors.company_business_email
+							)}
+							helperText={
+								touched.company_business_email && errors.company_business_email
+							}
+						/>
+					</Grid>
 
-			<Grid item xs={12} md={6}>
-				<SharedSelect
-					label='country'
-					value={selectedValue}
-					onChange={handleSelectChange}
-					options={options}
-					placeholder='Choose your country'
-				/>
-			</Grid>
-
-			<Grid item xs={12} md={6}>
-				<SharedSelect
-					label='cities'
-					value={selectedValue}
-					onChange={handleSelectChange}
-					options={options}
-					placeholder='Choose your city'
-				/>
-			</Grid>
-
-			<Grid item xs={12}>
-				<Stack direction='row' alignItems='center' justifyContent='center'>
-					<FormControl sx={{ width: '30%' }}>
-						<InputLabel id='country-code-label'>Code</InputLabel>
+					<Grid item xs={12}>
 						<Select
-							labelId='country-code-label'
-							id='country-code'
-							label='Country Code'
+							labelId='country-code'
+							id='demo-simple-select'
+							label='CITY'
+							variant='outlined'
+							fullWidth
+							sx={{
+								'&.MuiInput-underline:before': {
+									content: 'none'
+								},
+								'& .MuiSelect-select': {
+									display: 'flex'
+								}
+							}}
+							{...getFieldProps('company_city_id')}
+							error={Boolean(touched.company_city_id && errors.company_city_id)}
 						>
-							<MenuItem value='20'>+20</MenuItem>
-							<MenuItem value='966'>+966</MenuItem>
+							{countries.map((country) => (
+								<MenuItem key={country.countryId} value={country?.countryId}>
+									{country.countryName}
+								</MenuItem>
+							))}
 						</Select>
-					</FormControl>
+					</Grid>
 
-					<TextField fullWidth id='phone-number' label='Phone Number' />
-				</Stack>
-			</Grid>
+					<Grid item xs={12}>
+						<Stack direction='row' alignItems='center' justifyContent='center'>
+							<Select
+								labelId='country-code'
+								id='demo-simple-select'
+								variant='outlined'
+								sx={{
+									'&.MuiInput-underline:before': {
+										content: 'none'
+									},
+									'& .MuiSelect-select': {
+										display: 'flex'
+									}
+								}}
+								{...getFieldProps('company_country_id')}
+								error={Boolean(
+									touched.company_country_id && errors.company_country_id
+								)}
+							>
+								{countries.map((country) => (
+									<MenuItem key={country.countryId} value={country?.value}>
+										{country.countryKey}
+									</MenuItem>
+								))}
+							</Select>
 
-			<Grid item xs={12}>
-				<Stack direction='row' spacing={1} justifyContent='end'>
-					<Button
-						variant='text'
-						color='inherit'
-						sx={{
-							textTransform: 'capitalize',
-							width: { md: '20%' },
-							background: 'whitesmoke'
-						}}
-						onClick={handleBack}
-					>
-						Back
-					</Button>
-					<Button
-						type='submit'
-						variant='contained'
-						color='primary'
-						sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
-						onClick={handleNext}
-					>
-						Next
-					</Button>
-				</Stack>
-			</Grid>
-		</Grid>
+							<TextField
+								fullWidth
+								id='phone-number'
+								label='Phone Number'
+								{...getFieldProps('company_phone')}
+								error={Boolean(touched.company_phone && errors.company_phone)}
+								helperText={touched.company_phone && errors.company_phone}
+							/>
+						</Stack>
+					</Grid>
+
+					<Grid item xs={12}>
+						<Stack direction='row' spacing={1} justifyContent='end'>
+							<Button
+								variant='text'
+								color='inherit'
+								sx={{
+									textTransform: 'capitalize',
+									width: { md: '20%' },
+									background: 'whitesmoke'
+								}}
+								onClick={() => handleBack(values)}
+							>
+								Back
+							</Button>
+							<Button
+								type='submit'
+								variant='contained'
+								color='primary'
+								sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
+							>
+								Next
+							</Button>
+						</Stack>
+					</Grid>
+				</Grid>
+			</Form>
+		</FormikProvider>
 	)
 }
 

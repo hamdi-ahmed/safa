@@ -14,7 +14,7 @@ interface SharedSelectProps {
 	label: string
 	value: string
 	onChange: (event: SelectChangeEvent<string>) => void
-	options: Option[]
+	options: any[]
 	placeholder: string
 }
 
@@ -42,7 +42,7 @@ const SharedSelect: React.FC<SharedSelectProps> = ({
 				)}
 				{options.map((option) => (
 					<MenuItem key={option.value} value={option.value}>
-						{option.label}
+						{option.countryKey}
 					</MenuItem>
 				))}
 			</Select>
