@@ -110,14 +110,12 @@ const StepForm = () => {
 					<Step key={index}>
 						<StepLabel
 							style={{
-								borderColor:
-									activeStep === index ? '#00bcd4' : 'rgba(0, 0, 0, 0.38)'
+								borderColor: activeStep === index ? '#d9534f' : '#00bcd4'
 							}}
 							icon={
 								<span
 									style={{
-										color:
-											activeStep === index ? '#00bcd4' : 'rgba(0, 0, 0, 0.38)'
+										color: activeStep === index ? '#d9534f' : '#00bcd4'
 									}}
 								>
 									{icons[index]}

@@ -10,6 +10,9 @@ import {
 } from '@mui/material'
 import { Form, FormikProvider, useFormik } from 'formik'
 import * as Yup from 'yup'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import { APIS } from '../../utils/serviceUrls'
 
 // ** Shared Components
 import TextComponent from '../shared/TextField'
@@ -17,7 +20,7 @@ import SharedSelect from '../shared/SelectComponent'
 
 // ** types
 import { RegisterForm } from '../../types/register'
-import { countries } from '../../mocks/mocking'
+import { cities, countries } from '../../mocks/mocking'
 
 // ** types
 type Props = {
@@ -31,6 +34,25 @@ const CompanyInfoModal: React.FC<Props> = ({
 	handleNext,
 	handleBack
 }) => {
+	// ** toastify
+	const { success, error } = toast
+
+	// ** handle submit form
+	const registerUser = (formData: RegisterForm) => {
+		try {
+			axios.post(APIS.AUTH.REGISTER, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			})
+			success('User added successfully')
+			// handleNext(formData)
+		} catch (error) {
+			// error(error?.message)
+			console.log(error)
+		}
+	}
+
 	// ** formik => General info model validation
 	const companyInfoSchema = Yup.object().shape({
 		company_name: Yup.string().required('Company name is required'),
@@ -52,8 +74,8 @@ const CompanyInfoModal: React.FC<Props> = ({
 		initialValues: formData,
 		validationSchema: companyInfoSchema,
 		onSubmit: async (values: RegisterForm) => {
-			console.log({ values })
-			handleNext(values)
+			await registerUser(values)
+			// handleNext(values)
 		}
 	})
 
@@ -118,9 +140,9 @@ const CompanyInfoModal: React.FC<Props> = ({
 							{...getFieldProps('company_city_id')}
 							error={Boolean(touched.company_city_id && errors.company_city_id)}
 						>
-							{countries.map((country) => (
-								<MenuItem key={country.countryId} value={country?.countryId}>
-									{country.countryName}
+							{cities.map((city) => (
+								<MenuItem key={city.cityId} value={city?.cityId}>
+									{city.cityName}
 								</MenuItem>
 							))}
 						</Select>
@@ -183,7 +205,7 @@ const CompanyInfoModal: React.FC<Props> = ({
 								color='primary'
 								sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
 							>
-								Next
+								Submit
 							</Button>
 						</Stack>
 					</Grid>

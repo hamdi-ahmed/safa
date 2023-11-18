@@ -18,3 +18,15 @@ export const countries = [
         value: '966'
     }
 ]
+
+export const cities = [
+    {
+        cityId: '64b60044bb227a0add915983',
+        cityName: 'Cairo',
+
+    },
+    {
+        cityId: '64b60044bb227a0add915a08',
+        cityName: 'Alexandria',
+    }
+]

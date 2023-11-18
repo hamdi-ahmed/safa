@@ -2,7 +2,6 @@ import {
 	ThemeProvider,
 	CssBaseline,
 	Container,
-	Paper,
 	createTheme,
 	Stack
 } from '@mui/material'
@@ -25,12 +24,7 @@ const App = () => {
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<Container component='main' maxWidth='md' sx={{ mb: 4 }}>
-					{/* <Paper
-						variant='outlined'
-						sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-					> */}
 					<StepForm />
-					{/* </Paper> */}
 				</Container>
 			</ThemeProvider>
 		</Stack>

@@ -21,35 +21,33 @@ const ConfirmationMail: React.FC<Props> = ({
 				height={100}
 				icon='noto:open-mailbox-with-raised-flag'
 			/>
-			<Typography variant='h6' color='danger'>
+			<Typography variant='h6' color='#e040fb'>
 				We will send a message for this e-mail
 			</Typography>
-			<Typography variant='h6'>test@example.com</Typography>
+			<Typography variant='h6'>{formData?.user_email}</Typography>
 
-			<Stack>
-				<Stack direction='row' spacing={1} justifyContent='end'>
-					<Button
-						variant='text'
-						color='inherit'
-						sx={{
-							textTransform: 'capitalize',
-							width: { md: '20%' },
-							background: 'whitesmoke'
-						}}
-						onClick={() => handleBack(formData)}
-					>
-						Back
-					</Button>
-					<Button
-						type='submit'
-						variant='contained'
-						color='primary'
-						sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
-						onClick={() => handleFinish(formData, true)}
-					>
-						Confirm
-					</Button>
-				</Stack>
+			<Stack direction='row' spacing={1} justifyContent='end' width='100%'>
+				<Button
+					variant='text'
+					color='inherit'
+					sx={{
+						textTransform: 'capitalize',
+						width: { md: '20%' },
+						background: 'whitesmoke'
+					}}
+					onClick={() => handleBack(formData)}
+				>
+					Back
+				</Button>
+				<Button
+					type='submit'
+					variant='contained'
+					color='primary'
+					sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
+					onClick={() => handleFinish(formData, true)}
+				>
+					Confirm
+				</Button>
 			</Stack>
 		</Stack>
 	)
