@@ -39,13 +39,10 @@ const StepForm = () => {
 	const [formData, setFormData] = useState<RegisterForm>({
 		user_email: '',
 		user_full_name: '',
-		user_is_admin: '',
 		user_nationality: '',
 		user_password: '',
 		user_password_confirmation: '',
 		user_phone: '',
-		user_position: '',
-		user_status: '',
 		company_address: '',
 		company_business_email: '',
 		company_city_id: '',
@@ -54,15 +51,9 @@ const StepForm = () => {
 		company_phone: ''
 	})
 
-	// ** final step
-	const finalStepForm = (newData: RegisterForm) => {
-		console.log({ newData })
-	}
-
 	// ** handle changing move from step to another
 	const handleNext = (newData: RegisterForm, finalStep = false) => {
 		if (finalStep) {
-			finalStepForm(newData)
 			return
 		}
 		setFormData((prev) => ({ ...prev, ...newData }))
@@ -127,9 +118,19 @@ const StepForm = () => {
 			</Stepper>
 
 			<Stack>
-				<Typography textAlign='center' variant='h6' fontWeight='bolder'>
-					Tell us more about you
-				</Typography>
+				{activeStep === 0 ? (
+					<Typography textAlign='center' variant='h6' fontWeight='bolder'>
+						Tell us more about you
+					</Typography>
+				) : activeStep === 1 ? (
+					<Typography textAlign='center' variant='h6' fontWeight='bolder'>
+						Verify your company
+					</Typography>
+				) : (
+					<Typography textAlign='center' variant='h6' fontWeight='bolder'>
+						You're all set, ready ?
+					</Typography>
+				)}
 				<Paper variant='outlined' sx={{ padding: 2 }}>
 					{getStepContent(activeStep)}
 				</Paper>

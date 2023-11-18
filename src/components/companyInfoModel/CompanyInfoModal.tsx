@@ -2,11 +2,12 @@ import {
 	Button,
 	FormControl,
 	Grid,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
 	Select,
 	Stack,
-	TextField
+	Typography
 } from '@mui/material'
 import { Form, FormikProvider, useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -16,7 +17,6 @@ import { APIS } from '../../utils/serviceUrls'
 
 // ** Shared Components
 import TextComponent from '../shared/TextField'
-import SharedSelect from '../shared/SelectComponent'
 
 // ** types
 import { RegisterForm } from '../../types/register'
@@ -34,21 +34,20 @@ const CompanyInfoModal: React.FC<Props> = ({
 	handleNext,
 	handleBack
 }) => {
-	// ** toastify
-	const { success, error } = toast
-
 	// ** handle submit form
-	const registerUser = (formData: RegisterForm) => {
+	const registerUser = async (formData: RegisterForm) => {
 		try {
-			axios.post(APIS.AUTH.REGISTER, formData, {
+			await axios.post(APIS.AUTH.REGISTER, formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
 			})
-			success('User added successfully')
-			// handleNext(formData)
-		} catch (error) {
-			// error(error?.message)
+			toast.success('Data registered successful', {
+				position: toast.POSITION.TOP_RIGHT
+			})
+			handleNext(formData)
+		} catch (error: any) {
+			toast.error(error?.message)
 			console.log(error)
 		}
 	}
@@ -59,13 +58,16 @@ const CompanyInfoModal: React.FC<Props> = ({
 
 		company_address: Yup.string().required('Company address is required'),
 		company_phone: Yup.string()
-			// .matches(/^\+20[0-9]{9}$/, 'Invalid phone number format')
+			.matches(
+				/^[1-9][0-9٠-٩]{8,12}$/,
+				'Phone number should not start with 0 and must be between 8 and 12 number'
+			)
 			.required('Phone number is required'),
 		company_business_email: Yup.string()
 			.email()
 			.required('Email address is required'),
 		company_city_id: Yup.string().required('City is required'),
-		company_country_id: Yup.string().required('City is required')
+		company_country_id: Yup.string().required('Country is required')
 	})
 
 	// ** formik =>  submit handler
@@ -73,9 +75,8 @@ const CompanyInfoModal: React.FC<Props> = ({
 		enableReinitialize: true,
 		initialValues: formData,
 		validationSchema: companyInfoSchema,
-		onSubmit: async (values: RegisterForm) => {
-			await registerUser(values)
-			// handleNext(values)
+		onSubmit: (values: RegisterForm) => {
+			registerUser(values)
 		}
 	})
 
@@ -123,45 +124,42 @@ const CompanyInfoModal: React.FC<Props> = ({
 					</Grid>
 
 					<Grid item xs={12}>
-						<Select
-							labelId='country-code'
-							id='demo-simple-select'
-							label='CITY'
-							variant='outlined'
-							fullWidth
-							sx={{
-								'&.MuiInput-underline:before': {
-									content: 'none'
-								},
-								'& .MuiSelect-select': {
-									display: 'flex'
-								}
-							}}
-							{...getFieldProps('company_city_id')}
-							error={Boolean(touched.company_city_id && errors.company_city_id)}
-						>
-							{cities.map((city) => (
-								<MenuItem key={city.cityId} value={city?.cityId}>
-									{city.cityName}
-								</MenuItem>
-							))}
-						</Select>
+						<FormControl fullWidth>
+							<InputLabel id='demo-simple-select-label'>CITY</InputLabel>
+							<Select
+								labelId='demo-simple-select-label'
+								id='demo-simple-select'
+								label='COUNTRY'
+								variant='outlined'
+								placeholder='Choose your city'
+								{...getFieldProps('company_city_id')}
+								error={Boolean(
+									touched.company_city_id && errors.company_city_id
+								)}
+							>
+								{cities.map((city) => (
+									<MenuItem key={city.cityId} value={city?.cityId}>
+										{city.cityName}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						{touched.company_city_id && errors.company_city_id && (
+							<Typography variant='caption' color='error'>
+								{errors.company_city_id}
+							</Typography>
+						)}
 					</Grid>
 
-					<Grid item xs={12}>
-						<Stack direction='row' alignItems='center' justifyContent='center'>
+					<Grid item xs={12} md={6}>
+						<FormControl fullWidth>
+							<InputLabel id='demo-simple-select-label'>COUNTRY</InputLabel>
 							<Select
-								labelId='country-code'
+								labelId='demo-simple-select-label'
 								id='demo-simple-select'
+								label='COUNTRY'
 								variant='outlined'
-								sx={{
-									'&.MuiInput-underline:before': {
-										content: 'none'
-									},
-									'& .MuiSelect-select': {
-										display: 'flex'
-									}
-								}}
+								placeholder='Choose your country'
 								{...getFieldProps('company_country_id')}
 								error={Boolean(
 									touched.company_country_id && errors.company_country_id
@@ -169,20 +167,47 @@ const CompanyInfoModal: React.FC<Props> = ({
 							>
 								{countries.map((country) => (
 									<MenuItem key={country.countryId} value={country?.value}>
-										{country.countryKey}
+										{country.countryName}
 									</MenuItem>
 								))}
 							</Select>
-
-							<TextField
-								fullWidth
-								id='phone-number'
-								label='Phone Number'
-								{...getFieldProps('company_phone')}
-								error={Boolean(touched.company_phone && errors.company_phone)}
-								helperText={touched.company_phone && errors.company_phone}
-							/>
-						</Stack>
+						</FormControl>
+						{touched.company_country_id && errors.company_country_id && (
+							<Typography variant='caption' color='error'>
+								{errors.company_country_id}
+							</Typography>
+						)}
+					</Grid>
+					<Grid item xs={12} md={6}>
+						<TextComponent
+							fullWidth
+							fieldName='Phone Number'
+							placeHolder='Enter company phone'
+							id='phone-number'
+							{...getFieldProps('company_phone')}
+							isPhone={true}
+							error={Boolean(touched.company_phone && errors.company_phone)}
+							InputProps={{
+								startAdornment: (
+									<InputAdornment
+										variant='outlined'
+										style={{
+											width: '10%',
+											margin: 'auto',
+											backgroundColor: '#FFF !important'
+										}}
+										position='start'
+									>
+										{values?.company_country_id}
+									</InputAdornment>
+								)
+							}}
+						/>
+						{touched.company_phone && errors.company_phone && (
+							<Typography variant='caption' color='error'>
+								{errors.company_phone}
+							</Typography>
+						)}
 					</Grid>
 
 					<Grid item xs={12}>

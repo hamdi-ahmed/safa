@@ -5,11 +5,13 @@ import TextField, { TextFieldProps } from '@mui/material/TextField'
 type Props = {
 	placeHolder: string
 	fieldName: string
+	isPhone?: boolean
 } & Omit<TextFieldProps, 'variant'>
 
 const TextComponent: React.FC<Props> = ({
 	placeHolder,
 	fieldName,
+	isPhone,
 	...props
 }) => {
 	return (
@@ -24,18 +26,20 @@ const TextComponent: React.FC<Props> = ({
 				style: {
 					fontWeight: 'bold',
 					textTransform: 'uppercase',
-					color: '#000'
+					color: '#000',
+					paddingLeft: isPhone ? '4rem' : 1
 				}
 			}}
 			inputProps={{
 				sx: {
 					'&::placeholder': {
-						color: 'gray'
+						color: 'gray',
+						padding: isPhone ? '4rem' : 1
 					}
 				},
 				style: {
 					background: '#FFF',
-					boxShadow: '0 0 1px rgba(0, 0, 0, 0.1)',
+					boxShadow: '0 0 3px rgba(0, 0, 0, 0.1)',
 					borderBottom: 'none'
 				}
 			}}

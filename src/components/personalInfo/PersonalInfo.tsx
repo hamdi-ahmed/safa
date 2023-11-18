@@ -1,7 +1,6 @@
 // ** Imports
 import { useState } from 'react'
 import {
-	Box,
 	Button,
 	FormControl,
 	Grid,
@@ -10,7 +9,7 @@ import {
 	InputLabel,
 	MenuItem,
 	Stack,
-	TextField
+	Typography
 } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { Icon } from '@iconify/react'
@@ -19,7 +18,6 @@ import { Form, FormikProvider, useFormik } from 'formik'
 
 // ** Shared Components
 import TextComponent from '../shared/TextField'
-import SharedSelect from '../shared/SelectComponent'
 
 // ** types
 import { RegisterForm } from '../../types/register'
@@ -33,7 +31,6 @@ type Props = {
 
 const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 	// ** states
-	const [selectedValue, setSelectedValue] = useState('')
 	const [showPassword, setShowPassword] = useState(false)
 	const [confirmationPassword, setConfirmationPassword] = useState(false)
 
@@ -46,10 +43,6 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 		setConfirmationPassword(!confirmationPassword)
 	}
 
-	const handleSelectChange = (event: SelectChangeEvent<string>) => {
-		setSelectedValue(event.target.value as string)
-	}
-
 	// ** icons style
 	const iconStyle = {
 		backgroundColor: '#FFF !important'
@@ -60,13 +53,21 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 		user_email: Yup.string().email().required('Email address is required'),
 		user_password: Yup.string()
 			.required('Password is required')
-			.min(8, 'Password must be at least 8 characters'),
+			.min(8, 'Password must be at least 8 characters')
+			.max(20, 'Password should not be greater than 20 characters')
+			.matches(
+				/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/,
+				'Password should be at least 8 char, at least one small letter, one capital letter '
+			),
 		user_password_confirmation: Yup.string()
 			.oneOf([Yup.ref('user_password'), ''], 'Passwords must match')
 			.required('Confirm Password is required'),
 		user_full_name: Yup.string().required('Full name is required'),
 		user_phone: Yup.string()
-			// .matches(/^\+20[0-9]{9}$/, 'Invalid phone number format')
+			.matches(
+				/^[1-9][0-9٠-٩]{8,12}$/,
+				'Phone number should not start with 0 and must be between 8 and 12 number'
+			)
 			.required('Phone number is required'),
 		user_nationality: Yup.string().required('Country is required')
 	})
@@ -77,13 +78,11 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 		initialValues: formData,
 		validationSchema: generalInfoSchema,
 		onSubmit: async (values: RegisterForm) => {
-			console.log({ values })
 			handleNext(values)
-			// updateFormData('step1', values)
 		}
 	})
 
-	const { errors, touched, getFieldProps } = form
+	const { errors, touched, getFieldProps, values } = form
 
 	return (
 		<FormikProvider value={form}>
@@ -111,20 +110,15 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 						/>
 					</Grid>
 
-					<Grid item xs={12}>
-						<Stack direction='row' alignItems='center' justifyContent='center'>
+					<Grid item xs={12} md={6}>
+						<FormControl fullWidth>
+							<InputLabel id='demo-simple-select-label'>COUNTRY</InputLabel>
 							<Select
-								labelId='country-code'
+								labelId='demo-simple-select-label'
 								id='demo-simple-select'
+								label='COUNTRY'
 								variant='outlined'
-								sx={{
-									'&.MuiInput-underline:before': {
-										content: 'none'
-									},
-									'& .MuiSelect-select': {
-										display: 'flex'
-									}
-								}}
+								placeholder='Choose your country'
 								{...getFieldProps('user_nationality')}
 								error={Boolean(
 									touched.user_nationality && errors.user_nationality
@@ -132,20 +126,43 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 							>
 								{countries.map((country) => (
 									<MenuItem key={country.countryId} value={country?.value}>
-										{country.countryKey}
+										{country.countryName}
 									</MenuItem>
 								))}
 							</Select>
+						</FormControl>
+					</Grid>
 
-							<TextField
-								fullWidth
-								id='phone-number'
-								label='Phone Number'
-								{...getFieldProps('user_phone')}
-								error={Boolean(touched.user_phone && errors.user_phone)}
-								helperText={touched.user_phone && errors.user_phone}
-							/>
-						</Stack>
+					<Grid item xs={12} md={6}>
+						<TextComponent
+							fieldName='Phone Number'
+							placeHolder='Enter you phone number'
+							fullWidth
+							isPhone={true}
+							id='phone-number'
+							margin='none'
+							{...getFieldProps('user_phone')}
+							InputProps={{
+								startAdornment: (
+									<InputAdornment
+										style={{
+											width: '10%',
+											margin: 'auto',
+											backgroundColor: '#FFF !important'
+										}}
+										position='start'
+									>
+										{values?.user_nationality}
+									</InputAdornment>
+								)
+							}}
+							error={Boolean(touched.user_phone && errors.user_phone)}
+						/>
+						{touched.user_phone && errors.user_phone && (
+							<Typography variant='caption' color='error'>
+								{errors.user_phone}
+							</Typography>
+						)}
 					</Grid>
 
 					<Grid item xs={12}>
