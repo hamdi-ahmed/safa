@@ -7,13 +7,13 @@ export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
 	[`&.${stepConnectorClasses.active}`]: {
 		[`& .${stepConnectorClasses.line}`]: {
 			backgroundImage:
-				'linear-gradient( 95deg,#00bcd4 0%,rgb(233,64,87) 50%,#00bcd4 100%)'
+				'linear-gradient( 95deg,#00bcd4 0%,#00bcd4 50%,#00bcd4 100%)'
 		}
 	},
 	[`&.${stepConnectorClasses.completed}`]: {
 		[`& .${stepConnectorClasses.line}`]: {
 			backgroundImage:
-				'linear-gradient( 95deg,#00bcd4 0%,rgb(233,64,87) 50%,#00bcd4 100%)'
+				'linear-gradient( 95deg,#00bcd4 0%,#00bcd4 50%,#00bcd4 100%)'
 		}
 	},
 	[`& .${stepConnectorClasses.line}`]: {

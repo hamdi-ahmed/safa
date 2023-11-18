@@ -34,12 +34,12 @@ const TextComponent: React.FC<Props> = ({
 				sx: {
 					'&::placeholder': {
 						color: 'gray',
-						padding: isPhone ? '4rem' : 1
+						padding: isPhone ? '1rem' : 1
 					}
 				},
 				style: {
 					background: '#FFF',
-					boxShadow: '0 0 3px rgba(0, 0, 0, 0.1)',
+					boxShadow: '0 0 2px rgba(0, 0, 0, 0.1)',
 					borderBottom: 'none'
 				}
 			}}

@@ -11,7 +11,7 @@ import {
 	Stack,
 	Typography
 } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select from '@mui/material/Select'
 import { Icon } from '@iconify/react'
 import * as Yup from 'yup'
 import { Form, FormikProvider, useFormik } from 'formik'
@@ -118,12 +118,15 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 								id='demo-simple-select'
 								label='COUNTRY'
 								variant='outlined'
-								placeholder='Choose your country'
+								defaultValue='Choose your country'
 								{...getFieldProps('user_nationality')}
 								error={Boolean(
 									touched.user_nationality && errors.user_nationality
 								)}
 							>
+								<MenuItem value='' disabled>
+									Choose your country
+								</MenuItem>
 								{countries.map((country) => (
 									<MenuItem key={country.countryId} value={country?.value}>
 										{country.countryName}
@@ -131,6 +134,11 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 								))}
 							</Select>
 						</FormControl>
+						{touched.user_nationality && errors.user_nationality && (
+							<Typography variant='caption' color='error'>
+								{errors.user_nationality}
+							</Typography>
+						)}
 					</Grid>
 
 					<Grid item xs={12} md={6}>
@@ -248,7 +256,6 @@ const PersonalInfo: React.FC<Props> = ({ formData, handleNext }) => {
 								variant='contained'
 								color='primary'
 								sx={{ textTransform: 'capitalize', width: { md: '30%' } }}
-								// onClick={handleNext}
 							>
 								Next
 							</Button>

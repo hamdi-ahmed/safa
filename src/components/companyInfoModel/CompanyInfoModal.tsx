@@ -137,6 +137,9 @@ const CompanyInfoModal: React.FC<Props> = ({
 									touched.company_city_id && errors.company_city_id
 								)}
 							>
+								<MenuItem value='' disabled>
+									Choose your city
+								</MenuItem>
 								{cities.map((city) => (
 									<MenuItem key={city.cityId} value={city?.cityId}>
 										{city.cityName}
@@ -165,6 +168,9 @@ const CompanyInfoModal: React.FC<Props> = ({
 									touched.company_country_id && errors.company_country_id
 								)}
 							>
+								<MenuItem value='' disabled>
+									Choose your country
+								</MenuItem>
 								{countries.map((country) => (
 									<MenuItem key={country.countryId} value={country?.value}>
 										{country.countryName}
